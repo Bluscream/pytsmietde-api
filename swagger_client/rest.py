@@ -225,7 +225,7 @@ class RESTClientObject(object):
 
         if not 200 <= r.status <= 299: # todo hook!
             if tries < 1 and r.status == 400 and json.loads(r.data) == {"reason":"integrity","success":False}:
-                logger.warning("Request failed because 'X-ORIGIN-INTEGRITY' was wrong or missing, fetching correct header and retrying ...")
+                logger.warning(f"[{tries}] Request failed because 'X-ORIGIN-INTEGRITY' was wrong or missing, fetching correct header and retrying ...")
                 integ: swagger_client.ConfigOriginIntegrityHeader = swagger_client.ConfigApi().get_x_origin_integrity_header()
                 swagger_client.ApiClient.X_ORIGIN_INTEGRITY_HEADER = { base64.b64decode(integ.h): base64.b64decode(integ.v) }
                 return self.request(method, url, query_params, headers, body, post_params, _preload_content, _request_timeout, tries+1)

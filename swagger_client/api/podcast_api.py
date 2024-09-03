@@ -18,6 +18,8 @@ import re  # noqa: F401
 import six
 
 from swagger_client.api_client import ApiClient
+import sys
+maxint = sys.maxsize * 2 + 1
 
 
 class PodcastApi(object):
@@ -117,7 +119,7 @@ class PodcastApi(object):
             _request_timeout=params.get('_request_timeout'),
             collection_formats=collection_formats)
 
-    def get_podcast_episodes(self, **kwargs):  # noqa: E501
+    def get_podcast_episodes(self, **kwargs):  # noqa: E501 # page=None, limit=None, 
         """Get Podcast Episodes  # noqa: E501
 
         This method makes a synchronous HTTP request by default. To make an
@@ -126,12 +128,16 @@ class PodcastApi(object):
         >>> result = thread.get()
 
         :param async_req bool
-        :param str page: page
-        :param str limit: limit
+        :param str page: page # Default: 1
+        :param str limit: limit # Max: 100
         :return: PodcastEpisodesGetRequest
                  If the method is called asynchronously,
                  returns the request thread.
         """
+        _page = kwargs.get('page', None)
+        if _page and (_page > maxint or _page < 1): raise Exception(f"?page={_page} must be between 1 and {maxint}!")
+        _limit = kwargs.get('limit', None)
+        if _limit and (_limit > 100 or _limit < 1): raise Exception(f"?limit={_limit} must be between 1 and 100!")
         kwargs['_return_http_data_only'] = True
         if kwargs.get('async_req'):
             return self.get_podcast_episodes_with_http_info(**kwargs)  # noqa: E501
